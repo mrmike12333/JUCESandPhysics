@@ -21,7 +21,8 @@ class SandPhysicsApp final
         mainWindow.reset(new juce::DocumentWindow(
             "Window", 
             juce::Colours::black, 
-            juce::DocumentWindow::TitleBarButtons::allButtons));
+            juce::DocumentWindow::TitleBarButtons::minimiseButton + 
+            juce::DocumentWindow::TitleBarButtons::closeButton));
         
         mainWindow->setBounds(100, 100, 400, 500);
         mainWindow->setVisible(true);
