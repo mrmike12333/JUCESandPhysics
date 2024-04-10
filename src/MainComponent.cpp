@@ -2,7 +2,7 @@
 
 MainComponent::MainComponent()
 {
-
+    setSize(Sizes::Width, Sizes::Height);
 }
 
 void MainComponent::paint(juce::Graphics& g)

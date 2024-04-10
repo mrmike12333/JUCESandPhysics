@@ -15,6 +15,12 @@ public:
     */
     explicit MainComponent();
 
+    enum Sizes
+    {
+        Width = 800,
+        Height = 800
+    };
+
     void paint (juce::Graphics&) override;
     
     void resized() override;
