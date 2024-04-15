@@ -8,6 +8,23 @@ enum GridSettings
 };
 
 /**
+ * @brief Handy class for getting the grid position
+ */
+struct GridPosition
+{
+    GridPosition()
+        : row(0)
+        , col(0)
+        , isValid(false)
+    {
+    }
+
+    // TODO: Make integer types more consistent.
+    unsigned int row, col;
+    bool isValid;
+};
+
+/**
  * @brief The component grid which handles user input and drawing the "sand" to screen.
  */
 class SandGrid final
@@ -33,6 +50,10 @@ public:
      */
     void drawDebugGrid(juce::Graphics& g) const;
 
+    [[nodiscard]] GridPosition convertPointToGridPosition(juce::Point<float> location) const;
+
     std::array<std::array<uint8_t, GridSettings::Columns>, GridSettings::Rows> grid;
     float cellWidth, cellHeight;
+
+    GridPosition lastClickPos;
 };
