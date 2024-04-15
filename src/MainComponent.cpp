@@ -3,16 +3,16 @@
 MainComponent::MainComponent()
 {
     setSize(Sizes::Width, Sizes::Height);
+
+    addAndMakeVisible(sandGrid);
 }
 
 void MainComponent::paint(juce::Graphics& g)
 {
-    const auto bounds = getLocalBounds();
-    g.setColour(juce::Colours::white);
-    g.drawText("Hello World!", bounds, juce::Justification::centred);
+    juce::Component::paint(g);
 }
 
 void MainComponent::resized()
 {
-    
+    sandGrid.setBounds(getLocalBounds().reduced(50));
 }

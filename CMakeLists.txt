@@ -16,6 +16,7 @@ target_sources(SandPhysics
     PRIVATE
         src/Main.cpp
         src/MainComponent.cpp
+        src/SandComponent.cpp
     )
 
 target_compile_definitions(SandPhysics

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <juce_gui_extra/juce_gui_extra.h>
+#include "SandComponent.h"
 
 /**
  * @brief The main component which holds everything within the app.
@@ -26,5 +27,6 @@ public:
     void resized() override;
 
 private:
+    SandGrid sandGrid;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };
