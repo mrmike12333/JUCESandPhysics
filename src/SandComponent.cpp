@@ -142,16 +142,15 @@ void SandGrid::applyPhysicsToGrid()
             if (physicsGrid[row][col] == true
                 && row < GridSettings::Rows - 1)
             {
-                const bool belowBlock = physicsGrid[row + 1][col];
-
                 // Fall to next block
-                if (belowBlock == false)
+                if (physicsGrid[row + 1][col] == false)
                 {
                     renderGrid[row][col] = false;
                     renderGrid[row + 1][col] = true;
                     continue;
                 }
 
+                // Offset to the left or right
                 int offset = 0;
                 if (col == 0)
                     offset = 1;
