@@ -4,8 +4,8 @@
 
 enum GridSettings
 {
-    Columns = 10,
-    Rows = 10
+    Columns = 80,
+    Rows = 80
 };
 
 /**
