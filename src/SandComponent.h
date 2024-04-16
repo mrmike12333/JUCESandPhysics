@@ -41,6 +41,8 @@ public:
 
     void resized() override;
 
+    void mouseDown(const juce::MouseEvent &event) override;
+
     void mouseUp(const juce::MouseEvent &event) override;
 
     void timerCallback() override;
@@ -69,6 +71,8 @@ public:
      */
     void applyPhysicsToGrid();
 
+    void queueNewSandPlacement(GridPosition position);
+
     /**
      * @brief   Convert a pixel, screen position to a point on a grid.
      *          NOTE: if outside grid bounds, the position is marked invalid.
@@ -78,10 +82,17 @@ public:
      */
     [[nodiscard]] GridPosition convertPointToGridPosition(juce::Point<float> location) const;
 
+    void setMouseHeldDown(const bool mouseDown) { isMouseDown = mouseDown; }
+
+    [[nodiscard]] bool getMouseHeldDown() const { return isMouseDown; }
+
     std::array<std::array<bool, GridSettings::Columns>, GridSettings::Rows> physicsGrid, renderGrid;
     float cellWidth, cellHeight;
 
     std::vector<GridPosition> updateQueue;
 
     juce::CriticalSection gridLock;
+
+    bool isMouseDown;
+    GridPosition lastMouseDownPosition;
 };

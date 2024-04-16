@@ -5,6 +5,8 @@ SandGrid::SandGrid()
     , renderGrid()
     , cellWidth(0)
     , cellHeight(0)
+    , isMouseDown(false)
+    , lastMouseDownPosition()
 {
     startTimerHz(30);
     resetGrid(physicsGrid);
@@ -29,19 +31,29 @@ void SandGrid::resized()
     cellWidth = bounds.getWidth() / static_cast<float>(GridSettings::Columns);
 }
 
+void SandGrid::mouseDown(const juce::MouseEvent &event)
+{
+    setMouseHeldDown(true);
+    lastMouseDownPosition = convertPointToGridPosition(event.getPosition().toFloat());
+}
+
 void SandGrid::mouseUp(const juce::MouseEvent &event)
 {
     const GridPosition clickPos = convertPointToGridPosition(event.getPosition().toFloat());
 
-    if (clickPos.isValid)
-    {
-        updateQueue.emplace_back(clickPos);
-    }
+    queueNewSandPlacement(clickPos);
+
+    setMouseHeldDown(false);
 }
 
 void SandGrid::timerCallback()
 {
     juce::ScopedTryLock lock(gridLock);
+
+    if (getMouseHeldDown())
+    {
+        queueNewSandPlacement(lastMouseDownPosition);
+    }
 
     // Handle next update
     if (!updateQueue.empty())
@@ -120,6 +132,14 @@ void SandGrid::applyPhysicsToGrid()
                 renderGrid[row + 1][col] = true;
             }
         }
+    }
+}
+
+void SandGrid::queueNewSandPlacement(const GridPosition position)
+{
+    if (position.isValid)
+    {
+        updateQueue.emplace_back(position);
     }
 }
 
