@@ -10,16 +10,7 @@ SandGrid::SandGrid()
 
 void SandGrid::paint(juce::Graphics &g)
 {
-    if (lastClickPos.isValid)
-    {
-        // TODO: Make colours into member variables.
-        g.setColour(juce::Colours::sandybrown);
-        g.fillRect(static_cast<float>(lastClickPos.col) * cellWidth
-            , static_cast<float>(lastClickPos.row) * cellHeight
-            , cellWidth
-            , cellHeight);
-    }
-
+    drawSand(g);
     drawDebugGrid(g);
 }
 
@@ -33,15 +24,20 @@ void SandGrid::resized()
 
 void SandGrid::mouseUp(const juce::MouseEvent &event)
 {
-    lastClickPos = convertPointToGridPosition(event.getPosition().toFloat());
-    repaint();
+    const GridPosition clickPos = convertPointToGridPosition(event.getPosition().toFloat());
+
+    if (clickPos.isValid)
+    {
+        grid[clickPos.row][clickPos.col] = true;
+        repaint();
+    }
 }
 
 void SandGrid::resetGrid()
 {
     for (auto&  row : grid)
         for (auto& cell : row)
-            cell = 0;
+            cell = false;
 }
 
 void SandGrid::drawDebugGrid(juce::Graphics &g) const
@@ -64,7 +60,25 @@ void SandGrid::drawDebugGrid(juce::Graphics &g) const
     }
 }
 
-GridPosition SandGrid::convertPointToGridPosition(juce::Point<float> location) const
+void SandGrid::drawSand(juce::Graphics &g) const
+{
+    for (size_t row = 0; row < GridSettings::Rows; ++row)
+    {
+        for (size_t col = 0; col < GridSettings::Columns; ++col)
+        {
+            if (grid[row][col] == false)
+                continue;
+
+            g.setColour(juce::Colours::sandybrown);
+            g.fillRect(static_cast<float>(col) * cellWidth
+                , static_cast<float>(row) * cellHeight
+                , cellWidth
+                , cellHeight);
+        }
+    }
+}
+
+GridPosition SandGrid::convertPointToGridPosition(const juce::Point<float> location) const
 {
     GridPosition position;
 

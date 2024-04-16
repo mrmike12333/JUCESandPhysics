@@ -51,6 +51,12 @@ public:
     void drawDebugGrid(juce::Graphics& g) const;
 
     /**
+     * @brief Draw the "sand" to screen
+     * @param g the juce graphics context to draw to.
+     */
+    void drawSand(juce::Graphics& g) const;
+
+    /**
      * @brief   Convert a pixel, screen position to a point on a grid.
      *          NOTE: if outside grid bounds, the position is marked invalid.
      * @param location The position on the screen as a juce float point.
@@ -59,8 +65,6 @@ public:
      */
     [[nodiscard]] GridPosition convertPointToGridPosition(juce::Point<float> location) const;
 
-    std::array<std::array<uint8_t, GridSettings::Columns>, GridSettings::Rows> grid;
+    std::array<std::array<bool, GridSettings::Columns>, GridSettings::Rows> grid;
     float cellWidth, cellHeight;
-
-    GridPosition lastClickPos;
 };
