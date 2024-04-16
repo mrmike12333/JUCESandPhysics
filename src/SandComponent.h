@@ -1,5 +1,6 @@
 #pragma once
 #include <juce_gui_extra/juce_gui_extra.h>
+#include <juce_events/juce_events.h>
 
 enum GridSettings
 {
@@ -29,6 +30,7 @@ struct GridPosition
  */
 class SandGrid final
     : public juce::Component
+    , public juce::Timer
 {
 public:
     explicit SandGrid();
@@ -40,6 +42,8 @@ public:
     void resized() override;
 
     void mouseUp(const juce::MouseEvent &event) override;
+
+    void timerCallback() override;
 
     void resetGrid();
 
@@ -57,6 +61,11 @@ public:
     void drawSand(juce::Graphics& g) const;
 
     /**
+     * @brief Apply some physics to give the sand "gravity"
+     */
+    void applyPhysicsToGrid();
+
+    /**
      * @brief   Convert a pixel, screen position to a point on a grid.
      *          NOTE: if outside grid bounds, the position is marked invalid.
      * @param location The position on the screen as a juce float point.
@@ -67,4 +76,6 @@ public:
 
     std::array<std::array<bool, GridSettings::Columns>, GridSettings::Rows> grid;
     float cellWidth, cellHeight;
+
+    std::vector<GridPosition> updateQueue;
 };

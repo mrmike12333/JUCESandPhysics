@@ -5,13 +5,15 @@ SandGrid::SandGrid()
     , cellWidth(0)
     , cellHeight(0)
 {
+    startTimerHz(30);
     resetGrid();
 }
 
 void SandGrid::paint(juce::Graphics &g)
 {
     drawSand(g);
-    drawDebugGrid(g);
+    g.setColour(juce::Colours::white);
+    g.drawRect(getLocalBounds().toFloat());
 }
 
 void SandGrid::resized()
@@ -28,9 +30,26 @@ void SandGrid::mouseUp(const juce::MouseEvent &event)
 
     if (clickPos.isValid)
     {
-        grid[clickPos.row][clickPos.col] = true;
+        updateQueue.emplace_back(clickPos);
+    }
+}
+
+void SandGrid::timerCallback()
+{
+    // Handle next update
+    if (!updateQueue.empty())
+    {
+        const GridPosition nextPos = updateQueue.front();
+        grid[nextPos.row][nextPos.col] = true;
+        updateQueue.erase(updateQueue.begin());
         repaint();
     }
+
+    // Apply Physics
+    applyPhysicsToGrid();
+
+    // Draw
+    repaint();
 }
 
 void SandGrid::resetGrid()
@@ -74,6 +93,24 @@ void SandGrid::drawSand(juce::Graphics &g) const
                 , static_cast<float>(row) * cellHeight
                 , cellWidth
                 , cellHeight);
+        }
+    }
+}
+
+void SandGrid::applyPhysicsToGrid()
+{
+    for (size_t row = 0; row < GridSettings::Rows; ++row)
+    {
+        for (size_t col = 0; col < GridSettings::Columns; ++col)
+        {
+            // Move each block down
+            if (grid[row][col] == true
+                && row < GridSettings::Rows - 1
+                && grid[row + 1][col] == false)
+            {
+                grid[row][col] = false;
+                grid[row + 1][col] = true;
+            }
         }
     }
 }
