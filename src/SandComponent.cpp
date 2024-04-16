@@ -131,6 +131,8 @@ void SandGrid::drawSand(juce::Graphics &g) const
 
 void SandGrid::applyPhysicsToGrid()
 {
+    juce::Random rand;
+
     juce::ScopedLock lock(gridLock);
     for (size_t row = 0; row < GridSettings::Rows; ++row)
     {
@@ -138,11 +140,31 @@ void SandGrid::applyPhysicsToGrid()
         {
             // Move each block down
             if (physicsGrid[row][col] == true
-                && row < GridSettings::Rows - 1
-                && physicsGrid[row + 1][col] == false)
+                && row < GridSettings::Rows - 1)
             {
-                renderGrid[row][col] = false;
-                renderGrid[row + 1][col] = true;
+                const bool belowBlock = physicsGrid[row + 1][col];
+
+                // Fall to next block
+                if (belowBlock == false)
+                {
+                    renderGrid[row][col] = false;
+                    renderGrid[row + 1][col] = true;
+                    continue;
+                }
+
+                int offset = 0;
+                if (col == 0)
+                    offset = 1;
+                else if (col == GridSettings::Columns - 1)
+                    offset = -1;
+                else
+                    offset = rand.nextBool() ? -1 : 1;
+
+                if (physicsGrid[row + 1][col + offset] == false)
+                {
+                    renderGrid[row][col] = false;
+                    renderGrid[row + 1][col + offset] = true;
+                }
             }
         }
     }
@@ -160,11 +182,11 @@ GridPosition SandGrid::convertPointToGridPosition(const juce::Point<float> locat
 {
     GridPosition position;
 
+    if (getLocalBounds().toFloat().contains(location))
+        position.isValid = true;
+
     position.col = static_cast<unsigned int>(location.getX() / cellWidth);
     position.row = static_cast<unsigned int>(location.getY() / cellHeight);
-
-    if (location.getX() >= 0 && location.getY() >= 0)
-        position.isValid = true;
 
     return position;
 }
