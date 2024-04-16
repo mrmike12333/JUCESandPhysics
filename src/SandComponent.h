@@ -45,7 +45,11 @@ public:
 
     void timerCallback() override;
 
-    void resetGrid();
+    /**
+     * Re-initialise a grid to be all zeros
+     * @param grid The grid to reset
+     */
+    static void resetGrid(std::array<std::array<bool, GridSettings::Columns>, GridSettings::Rows>& grid);
 
     private:
     /**
@@ -74,8 +78,10 @@ public:
      */
     [[nodiscard]] GridPosition convertPointToGridPosition(juce::Point<float> location) const;
 
-    std::array<std::array<bool, GridSettings::Columns>, GridSettings::Rows> grid;
+    std::array<std::array<bool, GridSettings::Columns>, GridSettings::Rows> physicsGrid, renderGrid;
     float cellWidth, cellHeight;
 
     std::vector<GridPosition> updateQueue;
+
+    juce::CriticalSection gridLock;
 };

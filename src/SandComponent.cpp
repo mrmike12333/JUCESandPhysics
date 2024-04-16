@@ -1,19 +1,24 @@
 #include "SandComponent.h"
 
 SandGrid::SandGrid()
-    : grid()
+    : physicsGrid()
+    , renderGrid()
     , cellWidth(0)
     , cellHeight(0)
 {
     startTimerHz(30);
-    resetGrid();
+    resetGrid(physicsGrid);
+    resetGrid(renderGrid);
 }
 
 void SandGrid::paint(juce::Graphics &g)
 {
+    juce::ScopedLock lock(gridLock);
     drawSand(g);
     g.setColour(juce::Colours::white);
     g.drawRect(getLocalBounds().toFloat());
+
+    physicsGrid = renderGrid;
 }
 
 void SandGrid::resized()
@@ -36,11 +41,13 @@ void SandGrid::mouseUp(const juce::MouseEvent &event)
 
 void SandGrid::timerCallback()
 {
+    juce::ScopedTryLock lock(gridLock);
+
     // Handle next update
     if (!updateQueue.empty())
     {
         const GridPosition nextPos = updateQueue.front();
-        grid[nextPos.row][nextPos.col] = true;
+        physicsGrid[nextPos.row][nextPos.col] = true;
         updateQueue.erase(updateQueue.begin());
         repaint();
     }
@@ -52,7 +59,7 @@ void SandGrid::timerCallback()
     repaint();
 }
 
-void SandGrid::resetGrid()
+void SandGrid::resetGrid(std::array<std::array<bool, GridSettings::Columns>, GridSettings::Rows>& grid)
 {
     for (auto&  row : grid)
         for (auto& cell : row)
@@ -85,7 +92,7 @@ void SandGrid::drawSand(juce::Graphics &g) const
     {
         for (size_t col = 0; col < GridSettings::Columns; ++col)
         {
-            if (grid[row][col] == false)
+            if (renderGrid[row][col] == false)
                 continue;
 
             g.setColour(juce::Colours::sandybrown);
@@ -99,17 +106,18 @@ void SandGrid::drawSand(juce::Graphics &g) const
 
 void SandGrid::applyPhysicsToGrid()
 {
+    juce::ScopedLock lock(gridLock);
     for (size_t row = 0; row < GridSettings::Rows; ++row)
     {
         for (size_t col = 0; col < GridSettings::Columns; ++col)
         {
             // Move each block down
-            if (grid[row][col] == true
+            if (physicsGrid[row][col] == true
                 && row < GridSettings::Rows - 1
-                && grid[row + 1][col] == false)
+                && physicsGrid[row + 1][col] == false)
             {
-                grid[row][col] = false;
-                grid[row + 1][col] = true;
+                renderGrid[row][col] = false;
+                renderGrid[row + 1][col] = true;
             }
         }
     }
