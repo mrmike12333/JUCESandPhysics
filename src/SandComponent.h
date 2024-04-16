@@ -50,12 +50,17 @@ public:
     void timerCallback() override;
 
     /**
+     * @brief Reset the entire grid
+     */
+    void resetGrid();
+
+    private:
+    /**
      * Re-initialise a grid to be all zeros
      * @param grid The grid to reset
      */
     static void resetGrid(std::array<std::array<bool, GridSettings::Columns>, GridSettings::Rows>& grid);
 
-    private:
     /**
      * @brief Draw a grid to display each "pixel" the sand can be drawn to.
      * @param g the juce graphics context to draw to.

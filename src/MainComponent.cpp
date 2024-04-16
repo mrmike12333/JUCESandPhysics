@@ -5,6 +5,22 @@ MainComponent::MainComponent()
     setSize(Sizes::Width, Sizes::Height);
 
     addAndMakeVisible(sandGrid);
+    addAndMakeVisible(resetButton);
+
+    resetButton.setButtonText("Reset Grid");
+    resetButton.setColour(juce::TextButton::ColourIds::textColourOnId,
+        juce::Colours::white);
+    resetButton.setColour(juce::TextButton::ColourIds::textColourOffId,
+    juce::Colours::white);
+    resetButton.setColour(juce::TextButton::ColourIds::buttonColourId,
+    juce::Colours::black);
+    resetButton.setColour(juce::TextButton::ColourIds::buttonOnColourId,
+    juce::Colours::black);
+
+    resetButton.onClick = [this]()
+    {
+        sandGrid.resetGrid();
+    };
 }
 
 void MainComponent::paint(juce::Graphics& g)
@@ -14,5 +30,13 @@ void MainComponent::paint(juce::Graphics& g)
 
 void MainComponent::resized()
 {
-    sandGrid.setBounds(getLocalBounds().reduced(50));
+    constexpr int reduction = 50;
+    auto bounds = getLocalBounds();
+
+    bounds.removeFromLeft(reduction);
+    bounds.removeFromRight(reduction);
+    bounds.removeFromTop(reduction);
+
+    resetButton.setBounds(bounds.removeFromBottom(reduction));
+    sandGrid.setBounds(bounds);
 }

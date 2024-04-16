@@ -28,5 +28,6 @@ public:
 
 private:
     SandGrid sandGrid;
+    juce::TextButton resetButton;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

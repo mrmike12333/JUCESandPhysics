@@ -77,6 +77,13 @@ void SandGrid::timerCallback()
     repaint();
 }
 
+void SandGrid::resetGrid()
+{
+    juce::ScopedLock lock(gridLock);
+    resetGrid(physicsGrid);
+    resetGrid(renderGrid);
+}
+
 void SandGrid::resetGrid(std::array<std::array<bool, GridSettings::Columns>, GridSettings::Rows>& grid)
 {
     for (auto&  row : grid)
