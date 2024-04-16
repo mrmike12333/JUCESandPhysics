@@ -46,6 +46,12 @@ void SandGrid::mouseUp(const juce::MouseEvent &event)
     setMouseHeldDown(false);
 }
 
+void SandGrid::mouseDrag(const juce::MouseEvent &event)
+{
+    // Leverage the same holding code, makes for better visual consistency.
+    lastMouseDownPosition = convertPointToGridPosition(event.getPosition().toFloat());
+}
+
 void SandGrid::timerCallback()
 {
     juce::ScopedTryLock lock(gridLock);

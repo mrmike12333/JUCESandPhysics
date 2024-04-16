@@ -45,6 +45,8 @@ public:
 
     void mouseUp(const juce::MouseEvent &event) override;
 
+    void mouseDrag(const juce::MouseEvent &event) override;
+
     void timerCallback() override;
 
     /**
@@ -71,6 +73,11 @@ public:
      */
     void applyPhysicsToGrid();
 
+    /**
+     * @brief Post a new sand position to the queue.
+     *        NOTE: invalid grid positions will not be queued.
+     * @param position The grid position to place.
+     */
     void queueNewSandPlacement(GridPosition position);
 
     /**
