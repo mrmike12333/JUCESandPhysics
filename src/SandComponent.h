@@ -50,6 +50,13 @@ public:
      */
     void drawDebugGrid(juce::Graphics& g) const;
 
+    /**
+     * @brief   Convert a pixel, screen position to a point on a grid.
+     *          NOTE: if outside grid bounds, the position is marked invalid.
+     * @param location The position on the screen as a juce float point.
+     * @return  A GridPosition object detailing the row and column which the point
+     *          exists in
+     */
     [[nodiscard]] GridPosition convertPointToGridPosition(juce::Point<float> location) const;
 
     std::array<std::array<uint8_t, GridSettings::Columns>, GridSettings::Rows> grid;
