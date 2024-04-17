@@ -15,6 +15,8 @@ public:
 
     void mouseDown(const juce::MouseEvent &event) override;
 
+    void mouseDrag(const juce::MouseEvent &event) override;
+
     void paint(juce::Graphics &g) override;
 
     void resized() override;
@@ -31,6 +33,8 @@ private:
      * @return The new colour gradient
      */
     [[nodiscard]] juce::ColourGradient regenerateColourGradient() const;
+
+    void updateLastSelectedPosition(juce::Point<int> position);
 
     juce::ColourGradient grad;
     juce::Point<int> lastSelectedPosition;

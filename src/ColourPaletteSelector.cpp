@@ -8,9 +8,12 @@ ColourPaletteSelector::ColourPaletteSelector()
 
 void ColourPaletteSelector::mouseDown(const juce::MouseEvent &event)
 {
-    lastSelectedPosition = event.getPosition();
-    repaint();
-    sendChangeMessage();
+    updateLastSelectedPosition(event.getPosition());
+}
+
+void ColourPaletteSelector::mouseDrag(const juce::MouseEvent &event)
+{
+    updateLastSelectedPosition(event.getPosition());
 }
 
 void ColourPaletteSelector::paint(juce::Graphics &g)
@@ -59,4 +62,11 @@ juce::ColourGradient ColourPaletteSelector::regenerateColourGradient() const
         gradientToReturn.addColour(static_cast<float>(i++) * sizeOfEachIndex, col);
 
     return gradientToReturn;
+}
+
+void ColourPaletteSelector::updateLastSelectedPosition(const juce::Point<int> position)
+{
+    lastSelectedPosition = position;
+    repaint();
+    sendChangeMessage();
 }
