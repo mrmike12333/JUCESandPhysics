@@ -5,6 +5,8 @@ SandGrid::SandGrid()
     , renderGrid()
     , cellWidth(0)
     , cellHeight(0)
+    , sandColour(juce::Colours::sandybrown)
+    , backgroundColour(juce::Colours::black)
     , isMouseDown(false)
     , lastMouseDownPosition()
 {
@@ -65,7 +67,7 @@ void SandGrid::timerCallback()
     if (!updateQueue.empty())
     {
         const GridPosition nextPos = updateQueue.front();
-        physicsGrid[nextPos.row][nextPos.col] = true;
+        physicsGrid[nextPos.row][nextPos.col] = sandColour.brighter(randomNumberGenerator.nextFloat());
         updateQueue.erase(updateQueue.begin());
         repaint();
     }
@@ -84,11 +86,11 @@ void SandGrid::resetGrid()
     resetGrid(renderGrid);
 }
 
-void SandGrid::resetGrid(std::array<std::array<bool, GridSettings::Columns>, GridSettings::Rows>& grid)
+void SandGrid::resetGrid(SandArray& grid) const
 {
     for (auto&  row : grid)
         for (auto& cell : row)
-            cell = false;
+            cell = backgroundColour;
 }
 
 void SandGrid::drawDebugGrid(juce::Graphics &g) const
@@ -117,10 +119,10 @@ void SandGrid::drawSand(juce::Graphics &g) const
     {
         for (size_t col = 0; col < GridSettings::Columns; ++col)
         {
-            if (renderGrid[row][col] == false)
+            if (renderGrid[row][col] == backgroundColour)
                 continue;
 
-            g.setColour(juce::Colours::sandybrown);
+            g.setColour(renderGrid[row][col]);
             g.fillRect(static_cast<float>(col) * cellWidth
                 , static_cast<float>(row) * cellHeight
                 , cellWidth
@@ -131,22 +133,21 @@ void SandGrid::drawSand(juce::Graphics &g) const
 
 void SandGrid::applyPhysicsToGrid()
 {
-    juce::Random rand;
-
     juce::ScopedLock lock(gridLock);
     for (size_t row = 0; row < GridSettings::Rows; ++row)
     {
         for (size_t col = 0; col < GridSettings::Columns; ++col)
         {
             // Move each block down
-            if (physicsGrid[row][col] == true
+            if (physicsGrid[row][col] != backgroundColour
                 && row < GridSettings::Rows - 1)
             {
+                const juce::Colour currentColour = physicsGrid[row][col];
                 // Fall to next block
-                if (physicsGrid[row + 1][col] == false)
+                if (physicsGrid[row + 1][col] == backgroundColour)
                 {
-                    renderGrid[row][col] = false;
-                    renderGrid[row + 1][col] = true;
+                    renderGrid[row + 1][col] = currentColour;
+                    renderGrid[row][col] = backgroundColour;
                     continue;
                 }
 
@@ -157,12 +158,12 @@ void SandGrid::applyPhysicsToGrid()
                 else if (col == GridSettings::Columns - 1)
                     offset = -1;
                 else
-                    offset = rand.nextBool() ? -1 : 1;
+                    offset = randomNumberGenerator.nextBool() ? -1 : 1;
 
-                if (physicsGrid[row + 1][col + offset] == false)
+                if (physicsGrid[row + 1][col + offset] == backgroundColour)
                 {
-                    renderGrid[row][col] = false;
-                    renderGrid[row + 1][col + offset] = true;
+                    renderGrid[row + 1][col + offset] = currentColour;
+                    renderGrid[row][col] = backgroundColour;
                 }
             }
         }

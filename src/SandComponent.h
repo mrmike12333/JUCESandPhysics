@@ -20,7 +20,6 @@ struct GridPosition
     {
     }
 
-    // TODO: Make integer types more consistent.
     unsigned int row, col;
     bool isValid;
 };
@@ -36,6 +35,8 @@ public:
     explicit SandGrid();
 
     ~SandGrid() override = default;
+
+    typedef std::array<std::array<juce::Colour, GridSettings::Columns>, GridSettings::Rows> SandArray;
 
     void paint(juce::Graphics &g) override;
 
@@ -59,7 +60,7 @@ public:
      * Re-initialise a grid to be all zeros
      * @param grid The grid to reset
      */
-    static void resetGrid(std::array<std::array<bool, GridSettings::Columns>, GridSettings::Rows>& grid);
+    void resetGrid(SandArray& grid) const;
 
     /**
      * @brief Draw a grid to display each "pixel" the sand can be drawn to.
@@ -98,13 +99,17 @@ public:
 
     [[nodiscard]] bool getMouseHeldDown() const { return isMouseDown; }
 
-    std::array<std::array<bool, GridSettings::Columns>, GridSettings::Rows> physicsGrid, renderGrid;
+    SandArray physicsGrid, renderGrid;
     float cellWidth, cellHeight;
 
     std::vector<GridPosition> updateQueue;
 
     juce::CriticalSection gridLock;
 
+    juce::Colour sandColour, backgroundColour;
+
     bool isMouseDown;
     GridPosition lastMouseDownPosition;
+
+    juce::Random randomNumberGenerator;
 };
