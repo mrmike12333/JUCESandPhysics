@@ -55,6 +55,12 @@ public:
      */
     void resetGrid();
 
+    /**
+     * @brief Update the colour to paint the sand with
+     * @param col The juce::Colour to paint with
+     */
+    void setActiveColour(const juce::Colour& col) { sandColour = col; }
+
     private:
     /**
      * Re-initialise a grid to be all zeros

@@ -2,12 +2,15 @@
 
 #include <juce_gui_extra/juce_gui_extra.h>
 #include "SandComponent.h"
+#include "ColourPaletteSelector.h"
 
 /**
  * @brief The main component which holds everything within the app.
  * 
  */
-class MainComponent final : public juce::Component
+class MainComponent final
+    : public juce::Component
+    , public juce::ChangeListener
 {
 public:
     /**
@@ -26,8 +29,11 @@ public:
     
     void resized() override;
 
+    void changeListenerCallback(juce::ChangeBroadcaster *source) override;
+
 private:
     SandGrid sandGrid;
     juce::TextButton resetButton;
+    ColourPaletteSelector colourSelector;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

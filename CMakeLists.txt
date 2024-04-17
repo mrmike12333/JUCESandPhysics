@@ -17,6 +17,7 @@ target_sources(SandPhysics
         src/Main.cpp
         src/MainComponent.cpp
         src/AppDocumentWindow.cpp
+        src/ColourPaletteSelector.cpp
         src/SandComponent.cpp
     )
 
