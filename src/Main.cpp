@@ -1,4 +1,5 @@
 #include "MainComponent.h"
+#include "AppDocumentWindow.h"
 
 /**
  * @brief The top level juce application
@@ -18,11 +19,7 @@ class SandPhysicsApp final
 
     void initialise(const juce::String&) override
     {
-        mainWindow.reset(new juce::DocumentWindow(
-            "Window", 
-            juce::Colours::black, 
-            juce::DocumentWindow::TitleBarButtons::minimiseButton + 
-            juce::DocumentWindow::TitleBarButtons::closeButton));
+        mainWindow.reset(new AppDocumentWindow());
         
         mainWindow->setBounds(100, 100, 400, 500);
         mainWindow->setVisible(true);

@@ -16,6 +16,7 @@ target_sources(SandPhysics
     PRIVATE
         src/Main.cpp
         src/MainComponent.cpp
+        src/AppDocumentWindow.cpp
         src/SandComponent.cpp
     )
 
