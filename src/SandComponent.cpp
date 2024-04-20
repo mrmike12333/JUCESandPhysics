@@ -20,9 +20,6 @@ void SandGrid::paint(juce::Graphics &g)
 {
     juce::ScopedLock lock(gridLock);
     drawSand(g);
-    g.setColour(juce::Colours::white);
-    g.drawRect(getLocalBounds().toFloat());
-
     physicsGrid = renderGrid;
 }
 
