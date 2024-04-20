@@ -8,6 +8,12 @@ enum GridSettings
     Rows = 80
 };
 
+enum UpdateRate
+{
+    min = 30,
+    max = 240
+};
+
 /**
  * @brief Handy class for getting the grid position
  */
@@ -30,6 +36,7 @@ struct GridPosition
 class SandGrid final
     : public juce::Component
     , public juce::Timer
+    , public juce::AsyncUpdater
 {
 public:
     explicit SandGrid();
@@ -61,7 +68,16 @@ public:
      */
     void setActiveColour(const juce::Colour& col) { sandColour = col; }
 
+    /**
+     * @brief Set the update rate of the physics engine. This will define how fast sand is generated and falls
+     *        NOTE: This may have impact on performance at very high update rates.
+     * @param speed - How often the physics should update (in Hz)
+     */
+    void setUpdateRate(int speed);
+
     private:
+    void handleAsyncUpdate() override;
+
     /**
      * Re-initialise a grid to be all zeros
      * @param grid The grid to reset
@@ -118,4 +134,5 @@ public:
     GridPosition lastMouseDownPosition;
 
     juce::Random randomNumberGenerator;
+    std::atomic<int> engineSpeed;
 };

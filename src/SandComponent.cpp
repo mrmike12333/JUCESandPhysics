@@ -9,8 +9,9 @@ SandGrid::SandGrid()
     , backgroundColour(juce::Colours::black)
     , isMouseDown(false)
     , lastMouseDownPosition()
+    , engineSpeed(UpdateRate::min)
 {
-    startTimerHz(30);
+    startTimerHz(UpdateRate::min);
     resetGrid(physicsGrid);
     resetGrid(renderGrid);
 }
@@ -84,6 +85,18 @@ void SandGrid::resetGrid()
     juce::ScopedLock lock(gridLock);
     resetGrid(physicsGrid);
     resetGrid(renderGrid);
+}
+
+void SandGrid::setUpdateRate(const int speed)
+{
+    engineSpeed.store(speed);
+    triggerAsyncUpdate();
+}
+
+void SandGrid::handleAsyncUpdate()
+{
+    stopTimer();
+    startTimerHz(engineSpeed.load());
 }
 
 void SandGrid::resetGrid(SandArray& grid) const

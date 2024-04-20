@@ -32,8 +32,14 @@ public:
     void changeListenerCallback(juce::ChangeBroadcaster *source) override;
 
 private:
+    /**
+     * @brief Setup the speed slider which controls the rate which sand falls and generates.
+     */
+    void setupSpeedControl();
+
     SandGrid sandGrid;
     juce::TextButton resetButton;
     ColourPaletteSelector colourSelector;
+    juce::Slider speedControl;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

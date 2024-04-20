@@ -8,9 +8,12 @@ MainComponent::MainComponent()
     addAndMakeVisible(sandGrid);
     addAndMakeVisible(resetButton);
     addAndMakeVisible(colourSelector);
+    addAndMakeVisible(speedControl);
 
     colourSelector.addChangeListener(this);
     sandGrid.setActiveColour(colourSelector.getSelectedColour());
+
+    setupSpeedControl();
 
     resetButton.setButtonText("Reset Grid");
     resetButton.setColour(juce::TextButton::ColourIds::textColourOnId,
@@ -41,12 +44,13 @@ void MainComponent::resized()
 
     sandGrid.setBounds(bounds);
 
-    constexpr int numCols = 2;
+    constexpr int numCols = 3;
     const int componentWidth = bottomBounds.getWidth() / numCols;
 
     // Bottom Panel
     colourSelector.setBounds(bottomBounds.removeFromLeft(componentWidth));
     resetButton.setBounds(bottomBounds.removeFromLeft(componentWidth));
+    speedControl.setBounds(bottomBounds.removeFromLeft(componentWidth));
 }
 
 void MainComponent::changeListenerCallback(juce::ChangeBroadcaster *source)
@@ -55,4 +59,19 @@ void MainComponent::changeListenerCallback(juce::ChangeBroadcaster *source)
     {
         sandGrid.setActiveColour(colourSelector.getSelectedColour());
     }
+}
+
+void MainComponent::setupSpeedControl()
+{
+    speedControl.setSliderStyle(juce::Slider::LinearBarVertical);
+    speedControl.textFromValueFunction = [](const double val)
+    {
+        const double normalisedValue = ((val - UpdateRate::min) / (UpdateRate::max - UpdateRate::min)) * 100.0;
+        return juce::String("Speed: ") + juce::String(static_cast<int>(normalisedValue));
+    };
+    speedControl.setRange(UpdateRate::min, UpdateRate::max);
+    speedControl.setTextValueSuffix("%");
+    speedControl.setTextBoxIsEditable(false);
+    speedControl.onValueChange = [this](){ sandGrid.setUpdateRate(static_cast<int>(speedControl.getValue())); };
+    speedControl.setSkewFactor(0.5);
 }
