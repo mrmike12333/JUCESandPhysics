@@ -19,7 +19,7 @@ class SandPhysicsApp final
 
     void initialise(const juce::String&) override
     {
-        mainWindow.reset(new AppDocumentWindow());
+        mainWindow = std::make_unique<AppDocumentWindow>();
         
         mainWindow->setBounds(100, 100, 400, 500);
         mainWindow->setVisible(true);
